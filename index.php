@@ -20,9 +20,6 @@
             <a class="nav-link" href="mobiles_list.php">List</a>
           </li>
         </ul>
-        <form>
-          <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-        </form>
       </div>
     </div>
   </nav>

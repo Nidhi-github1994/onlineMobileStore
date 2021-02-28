@@ -3,7 +3,7 @@
 if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {  
     require("mysqli_connect.php");
     $errors = false;
-
+    
     if (empty($_POST['mobilename'])) {
         echo "<p>Please enter Mobile name.</p>";
     }
@@ -38,10 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {
     else{
         $modelnumber = mysqli_real_escape_string($dbc,$_POST['modelnumber']);
     }
-
-    if (isset($_FILES['picture']))
+    if(isset($_FILES['upload']))
     {
-        $image = $_FILES['picture']['mobilename'];
+        echo"hi2";
+        $mobilename = mysqli_real_escape_string($dbc,$_POST['mobilename']);
+        $image = $_FILES['upload']['name'];
         if(! file_exists("uploads")){
             mkdir("uploads");
           }
@@ -49,8 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {
           if( ! file_exists("uploads/$mobilename")){
             mkdir("uploads/".$mobilename);
           }
-      
-          if (move_uploaded_file($_FILES['picture']['tmp_name'], "uploads/$mobilename/$image")) {
+          
+          if (move_uploaded_file($_FILES['upload']['tmp_name'], "uploads/$mobilename/$image")) {
+              
             $q = "INSERT INTO mobiles (mobilename, modelid, color, price, brand, pictureurl) VALUES('$mobilename', '$modelnumber', '$color', '$price', '$brand','$image')"; 
             mysqli_query($dbc, $q) or die(mysqli_error($dbc));           
           } else {
@@ -80,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {
         <a href="add_mobile.php">ADD MOBILE</a>
     </div>
 </nav>
-<form action="add_mobile.php" method="post">
+<form enctype="multipart/form-data" action="add_mobile.php" method="post">
 
 	<fieldset><legend>Please Add Mobile Details:</legend>
 
@@ -104,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {
             if(isset ($_POST['modelnumber'])) echo$_POST['modelnumber'];
     ?>"></label></p>
 
-    <p>Mobile Picture: <input type="file" name="picture"></p>
+    <p>Mobile Picture: <input type="file" name="upload"></p>
 
 	<p align="center"><input type="submit" value="Submit" name="submit"></p>
 	</fieldset>

@@ -1,7 +1,8 @@
 <html>
   <head>
+  <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap-grid.min.css">
         <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap-grid.min.css">
+        
         </head>
         <body>
         <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
@@ -34,7 +35,7 @@
                         $r1 = @mysqli_query($dbc, $q1);
     
                         while($rowdata = mysqli_fetch_array($r1)){
-                            echo '
+                            echo' 
                             <div class="col">
                             <div class="card shadow-sm">                  
                               <img class="img-fluid" width="100%" height="100%" src=uploads/'.$rowdata['mobilename'].'/'. $rowdata['pictureurl'].' alt="Responsive image"/>
@@ -48,6 +49,7 @@
                                   <small class="text-muted">9 mins</small>
                                 </div>
                               </div>
+                            </div>
                             </div>';
                         } 
                       ?>

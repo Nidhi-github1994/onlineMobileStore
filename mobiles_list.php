@@ -1,5 +1,31 @@
+<?php
+  if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {  
+    session_start();
+    $_SESSION["mobilename"] = $_POST['mobilename'];
+    $_SESSION["price"] = $_POST['price'];
+    header("Location: http://localhost/onlineMobileStore/NidhiParekh_Project1/checkout.php");
+    
+  }
+?>
+
+
+
 <html>
   <head>
+  <style>
+    input {
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
+        background-color: #fff;
+      }
+      
+      input:focus {
+        outline: none;
+      }
+}
+</style>
   <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap-grid.min.css">
         <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap.min.css">
         
@@ -35,22 +61,27 @@
                         $r1 = @mysqli_query($dbc, $q1);
     
                         while($rowdata = mysqli_fetch_array($r1)){
-                            echo' 
+                            echo'
+                            <form action="mobiles_list.php" method="post"> 
                             <div class="col">
                             <div class="card shadow-sm">                  
                               <img class="img-fluid" width="100%" height="100%" src=uploads/'.$rowdata['mobilename'].'/'. $rowdata['pictureurl'].' alt="Responsive image"/>
                               <div class="card-body">
-                                <p class="card-text">MobileName: '.$rowdata['mobilename'].'<br>Color: '.$rowdata['color'].'<br>Price:'.$rowdata['price'].'<br>Brand: '.$rowdata['brand'].'</p>
+                                <p class="card-text">MobileName: <input name="mobilename" value="'.$rowdata['mobilename'].'" readonly></p>
+                                <p>Color: '.$rowdata['color'].'</p>
+                                <p>Price: <input name="price" value="'.$rowdata['price'].'" readonly></p>
+                                <p>Brand: '.$rowdata['brand'].'</p>
                                 <div class="d-flex justify-content-between align-items-center">
                                   <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                    <input type="submit" value="Buy Now" class="btn btn-sm btn-outline-secondary">
                                   </div>
                                   <small class="text-muted">9 mins</small>
                                 </div>
                               </div>
                             </div>
-                            </div>';
+                            </div>
+                            </form>';
                         } 
                       ?>
                   </div> 

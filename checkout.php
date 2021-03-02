@@ -1,28 +1,47 @@
+<?php
+    session_start();
+?>
+
 <html>
   <head>
         <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap-grid.min.css">
-        </head>
-        <body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript">
+          $('document').ready( function() {
+            function change() {
+              var quantity = $('#quantity').val();
+              var price = $('#price').val();
+              var total = quantity * price;
+              $('#total').val(sum);
+            }
+            $('#quantity').change(function(){ 
+              var total = $('#quantity').val() * $('#price').text();
+              $('#total').text("$"+ total);
+            });
+          });          
+        </script>
+      </head>
+      <body>
         <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="index.php">Mobile Store</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+          <div class="container-fluid">
+            <a class="navbar-brand" href="index.php">Mobile Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
 
-      <div class="collapse navbar-collapse" id="navbarsExample02">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="index.php">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="mobiles_list.php">List</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+            <div class="collapse navbar-collapse" id="navbarsExample02">
+              <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="index.php">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="mobiles_list.php">List</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
   <div class="container">
   <main>
   <div class="py-5 text-center">
@@ -37,17 +56,26 @@
         <ul class="list-group mb-3">
           <li class="list-group-item d-flex justify-content-between lh-sm">
             <div>
-              <h6 class="my-0">Product name</h6>
+              <h6 class="my-0"><?php echo $_SESSION["mobilename"]?></h6>
               <small class="text-muted">Brief description</small>
             </div>
-            <span class="text-muted">$12</span>
+            <span class="text-muted">$</span><span class="text-muted" id="price"><?php echo $_SESSION["price"]?></span>
           </li>
           
           
-          
+          <li class="list-group-item d-flex justify-content-between bg-light">
+            <div class="text-muted">
+              <h6 class="my-0">Quantity</h6>
+            </div>
+            <select class="form-select" id="quantity" required="" style="width:25%">
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+              </select>
+          </li>
           <li class="list-group-item d-flex justify-content-between">
-            <span>Total (USD)</span>
-            <strong>$20</strong>
+            <span>Total (CAD)</span>
+            <strong id="total"><?php echo "$".$_SESSION["price"]?></strong>
           </li>
         </ul>
 
@@ -58,7 +86,7 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="firstName" class="form-label">First name</label>
-              <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+              <input type="text" class="form-control" name="firstname" id="firstName" placeholder="" value="" required="">
               <div class="invalid-feedback">
                 Valid first name is required.
               </div>
@@ -66,36 +94,28 @@
 
             <div class="col-sm-6">
               <label for="lastName" class="form-label">Last name</label>
-              <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+              <input type="text" class="form-control" name="lastname" id="lastName" placeholder="" value="" required="">
               <div class="invalid-feedback">
                 Valid last name is required.
               </div>
             </div>
 
             <div class="col-12">
-              <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-              <input type="email" class="form-control" id="email" placeholder="you@example.com">
+              <label for="email" class="form-label">Email </label>
+              <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com">
               <div class="invalid-feedback">
                 Please enter a valid email address for shipping updates.
               </div>
             </div>
 
             <div class="col-12">
-              <label for="address" class="form-label">Address</label>
-              <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
-              <div class="invalid-feedback">
-                Please enter your shipping address.
-              </div>
-            </div>
-
-            <div class="col-12">
-              <label for="address2" class="form-label">Address 2 <span class="text-muted">(Optional)</span></label>
-              <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
+              <label for="address2" class="form-label">Address </label>
+              <input type="text" class="form-control" name="address" id="address2" placeholder="Street & unit">
             </div>
 
             <div class="col-md-5">
               <label for="country" class="form-label">Country</label>
-              <input type="text" class="form-control" id="country" placeholder="" required="">
+              <input type="text" class="form-control" name="country" id="country" placeholder="" required="">
               <div class="invalid-feedback">
                 Please select a valid country.
               </div>
@@ -103,7 +123,7 @@
 
             <div class="col-md-4">
               <label for="state" class="form-label">State</label>
-              <input type="text" class="form-control" id="state" placeholder="" required="">
+              <input type="text" class="form-control" name="state" id="state" placeholder="" required="">
               <div class="invalid-feedback">
                 Please provide a valid state.
               </div>
@@ -111,7 +131,7 @@
 
             <div class="col-md-3">
               <label for="zip" class="form-label">Zip</label>
-              <input type="text" class="form-control" id="zip" placeholder="" required="">
+              <input type="text" class="form-control" name="zip" id="zip" placeholder="" required="">
               <div class="invalid-feedback">
                 Zip code required.
               </div>
@@ -175,6 +195,4 @@
       </div>
     </div>
   </main>
-</div>
-</body>
 </html>

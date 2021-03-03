@@ -1,5 +1,71 @@
 <?php
     session_start();
+    $mobilename = $_SESSION["mobilename"];
+    $price = $_SESSION["price"];
+    require("mysqli_connect.php");
+    
+    
+    $select_from_mobilelist = "SELECT * FROM online_mobile_store.mobiles WHERE 
+            mobilename='$mobilename' AND price='$price'";
+    $r1 = @mysqli_query($dbc, $select_from_mobilelist);    
+    while($rowdata = mysqli_fetch_array($r1)){
+      $mobileid = $rowdata['mobileid'];
+    }
+    
+    
+    $select_from_inventory = "SELECT * FROM online_mobile_store.inventory WHERE mobileid='$mobileid'";
+    $r2 = @mysqli_query($dbc, $select_from_inventory);
+    while($rowdata = mysqli_fetch_array($r2)){
+      $available_mobile_quantity = $rowdata['available_unit'];
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {  
+      
+      $errors = false;
+  
+      if (empty($_POST['firstname']) || empty($_POST['lastname']) ||
+           empty($_POST['email']) || empty($_POST['street']) || 
+           empty($_POST['country']) || empty($_POST['state']) || empty($_POST['zip']) ||
+           empty($_POST['nameoncard']) || empty($_POST['cardnumber']) || 
+           empty($_POST['expirydate']) || empty($_POST['cvv'])) {
+          $errors = true;
+      }
+      else {
+          $firstName = mysqli_real_escape_string($dbc,$_POST['firstname']);
+          $lastName = mysqli_real_escape_string($dbc,$_POST['lastname']);
+          $email = mysqli_real_escape_string($dbc,$_POST['email']);
+          $street = mysqli_real_escape_string($dbc,$_POST['street']);
+          $country = mysqli_real_escape_string($dbc,$_POST['country']);
+          $state = mysqli_real_escape_string($dbc,$_POST['state']);
+          $zip = mysqli_real_escape_string($dbc,$_POST['zip']);
+          $nameOnCard = mysqli_real_escape_string($dbc,$_POST['nameoncard']);
+          $cardNumber = mysqli_real_escape_string($dbc,$_POST['cardnumber']);
+          $expiryDate = mysqli_real_escape_string($dbc,$_POST['expirydate']);
+          $cvv = mysqli_real_escape_string($dbc,$_POST['cvv']);
+          $quantity = mysqli_real_escape_string($dbc,$_POST['quantity']);
+          $paymenttype = mysqli_real_escape_string($dbc,$_POST['paymentMethod']);
+
+          $remaining_quantity = $available_mobile_quantity-$quantity;
+
+      }
+      if(!$errors) {
+          $insert_into_customers = "INSERT INTO customers (first_name, last_name, email, street, country, state, zip) 
+                    VALUES('$firstName', '$lastName', '$email', '$street', '$country', '$state', '$zip')";
+      
+          if (mysqli_query($dbc, $insert_into_customers)) {
+            $last_id = mysqli_insert_id($dbc);
+            $insert_into_orders = "INSERT INTO orders (customerid, mobileid, order_quantity, payment_method, name_on_card, card_number, total_amount) 
+            VALUES('$last_id', '$mobileid', '$quantity', '$paymenttype', '$nameOnCard', '$cardNumber', '$price* $quantity')";
+            if(mysqli_query($dbc, $insert_into_orders)){
+              $update_inventory = "UPDATE inventory SET available_unit='$remaining_quantity' WHERE mobileid='$mobileid'";
+              mysqli_query($dbc, $update_inventory);
+            }
+          }
+      }
+      mysqli_close($dbc);
+  } 
+  
+    
 ?>
 
 <html>
@@ -9,12 +75,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script type="text/javascript">
           $('document').ready( function() {
-            function change() {
-              var quantity = $('#quantity').val();
-              var price = $('#price').val();
-              var total = quantity * price;
-              $('#total').val(sum);
-            }
             $('#quantity').change(function(){ 
               var total = $('#quantity').val() * $('#price').text();
               $('#total').text("$"+ total);
@@ -48,7 +108,7 @@
       <h2>Checkout form</h2>
       <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
     </div>
-    <div class="row g-3">
+    <form action="checkout.php" class="row g-3" method="post">
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">Your cart</span>
@@ -67,7 +127,7 @@
             <div class="text-muted">
               <h6 class="my-0">Quantity</h6>
             </div>
-            <select class="form-select" id="quantity" required="" style="width:25%">
+            <select class="form-select" name="quantity" id="quantity" required="" style="width:25%">
                 <option value=1>1</option>
                 <option value=2>2</option>
                 <option value=3>3</option>
@@ -86,7 +146,7 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="firstName" class="form-label">First name</label>
-              <input type="text" class="form-control" name="firstname" id="firstName" placeholder="" value="" required="">
+              <input type="text" class="form-control" name="firstname" id="firstName" placeholder="" value="" required>
               <div class="invalid-feedback">
                 Valid first name is required.
               </div>
@@ -109,8 +169,8 @@
             </div>
 
             <div class="col-12">
-              <label for="address2" class="form-label">Address </label>
-              <input type="text" class="form-control" name="address" id="address2" placeholder="Street & unit">
+              <label for="address2" class="form-label">Street </label>
+              <input type="text" class="form-control" name="street" id="address2" placeholder="Street & unit">
             </div>
 
             <div class="col-md-5">
@@ -144,11 +204,11 @@
 
           <div class="my-3">
             <div class="form-check">
-              <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked="" required="">
+              <input id="credit" type="radio" name="paymentMethod" value="credit" class="form-check-input" checked="" required="">
               <label class="form-check-label" for="credit">Credit card</label>
             </div>
             <div class="form-check">
-              <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required="">
+              <input id="debit" name="paymentMethod" type="radio" value="debit" class="form-check-input" required="">
               <label class="form-check-label" for="debit">Debit card</label>
             </div>
           </div>
@@ -156,7 +216,7 @@
           <div class="row gy-3">
             <div class="col-md-6">
               <label for="cc-name" class="form-label">Name on card</label>
-              <input type="text" class="form-control" id="cc-name" placeholder="" required="">
+              <input type="text" class="form-control" name="nameoncard" id="cc-name" placeholder="" required="">
               <small class="text-muted">Full name as displayed on card</small>
               <div class="invalid-feedback">
                 Name on card is required
@@ -165,7 +225,7 @@
 
             <div class="col-md-6">
               <label for="cc-number" class="form-label">Credit card number</label>
-              <input type="text" class="form-control" id="cc-number" placeholder="" required="">
+              <input type="text" class="form-control" name="cardnumber" id="cc-number" placeholder="" required="">
               <div class="invalid-feedback">
                 Credit card number is required
               </div>
@@ -173,7 +233,7 @@
 
             <div class="col-md-3">
               <label for="cc-expiration" class="form-label">Expiration</label>
-              <input type="text" class="form-control" id="cc-expiration" placeholder="" required="">
+              <input type="text" class="form-control" name="expirydate" id="cc-expiration" placeholder="" required="">
               <div class="invalid-feedback">
                 Expiration date required
               </div>
@@ -181,7 +241,7 @@
 
             <div class="col-md-3">
               <label for="cc-cvv" class="form-label">CVV</label>
-              <input type="text" class="form-control" id="cc-cvv" placeholder="" required="">
+              <input type="text" class="form-control" name="cvv" id="cc-cvv" placeholder="" required="">
               <div class="invalid-feedback">
                 Security code required
               </div>
@@ -193,6 +253,6 @@
           <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
         </form>
       </div>
-    </div>
+    </form>
   </main>
 </html>

@@ -23,7 +23,7 @@
       input:focus {
         outline: none;
       }
-}
+
 </style>
   <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap-grid.min.css">
         <link rel="stylesheet" href="bootstrap-5.0.0-beta2-dist/css/bootstrap.min.css">
@@ -32,7 +32,7 @@
         <body>
         <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.php">Mobile Store</a>
+      <a class="navbar-brand" href="index.php">Mobile Planet</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -40,10 +40,10 @@
       <div class="collapse navbar-collapse" id="navbarsExample02">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="index.php">Home</a>
+            <a class="nav-link active" aria-current="page" href="mobiles_list.php">Mobiles</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="mobiles_list.php">List</a>
+            <a class="nav-link" href="checkout.php">Checkout</a>
           </li>
         </ul>
         
@@ -66,16 +66,18 @@
                             <div class="card shadow-sm">                  
                               <img class="img-fluid" width="100%" height="100%" src=uploads/'.$rowdata['mobilename'].'/'. $rowdata['pictureurl'].' alt="Responsive image"/>
                               <div class="card-body">
-                                <p class="card-text">MobileName: <input name="mobilename" value="'.$rowdata['mobilename'].'" readonly></p>
-                                <p>Color: '.$rowdata['color'].'</p>
-                                <p>Price: <input name="price" value="'.$rowdata['price'].'" readonly></p>
-                                <p>Brand: '.$rowdata['brand'].'</p>
+                                <h4 class="card-title"><input name="mobilename" value="'.$rowdata['mobilename'].'" readonly></h4>
+                                <h8 class="card-text">Brand: '.$rowdata['brand'].'</h8><br> 
+                                <h8 class="card-text">Color: '.$rowdata['color'].'</h8>                               
+                                
+                                <h8 class="card-text" style="visibility:hidden">Price: $<input name="price" value="'.$rowdata['price'].'"></h8>
                                 <div class="d-flex justify-content-between align-items-center">
                                   <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                                    
                                     <input type="submit" value="Buy Now" class="btn btn-sm btn-outline-secondary">
                                   </div>
-                                  <small class="text-muted">9 mins</small>
+                                  <h6 class="card-text">$ '.$rowdata['price'].'</h>
+                                  
                                 </div>
                               </div>
                             </div>
